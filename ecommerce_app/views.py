@@ -16,6 +16,7 @@ from rest_framework.views import APIView
 
 # Create your views here.
 class CartAPI(APIView):
+    """ This cart view are create,read,update and delete cart items """
     def get_object(self, pk):
         try:
             return Cart.objects.get(item_name=pk)
@@ -50,6 +51,7 @@ class CartAPI(APIView):
                 serializer.save(owner=self.request.user)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
+            """ non authenticated user add """
             print('================')
             cookie = request.session.get(str(item))
             if cookie:
@@ -80,6 +82,7 @@ class CartAPI(APIView):
                 serializer.save()
                 return Response(serializer.data)
         else:
+             """ non authenticated user update """
             cart_object = Item.objects.get(pk=pk)
             cookie = request.session.get(str(pk))
             print('cookie: ',cookie)
@@ -98,6 +101,7 @@ class CartAPI(APIView):
             cart_object.delete()
             return Response(status.HTTP_204_NO_CONTENT)
         else:
+             """ non authenticated user delete """
             data = request.session[str(pk)]
             if data:
                 del request.session[str(pk)]
@@ -106,7 +110,7 @@ class CartAPI(APIView):
 
 
 class CategoryAPI(APIView):
-    
+    """ Filter all items according to category """
     def get(self, request):
         cat = request.query_params.get('category')
         queryset = Item.objects.filter(cat_name__name=cat)
